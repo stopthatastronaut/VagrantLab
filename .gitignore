@@ -1,0 +1,5 @@
+.secret
+.secrets
+*.exe 
+*.msi
+.vagrant
