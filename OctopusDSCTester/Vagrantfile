@@ -81,6 +81,5 @@ Vagrant.configure("2") do |config|
     set-location c:\source\repos
     git clone https://github.com/twerthi/OctopusDSC.git
     cd OctopusDSC
-    . .\build-aws.ps1 
   SHELL
 end

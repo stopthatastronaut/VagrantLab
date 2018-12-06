@@ -3,3 +3,4 @@
 *.exe 
 *.msi
 .vagrant
+.vagrant.secret.yaml
