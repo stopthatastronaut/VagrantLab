@@ -13,10 +13,14 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "gusztavvargadr/w16s-sql17d"
-  
+
+  config.vm.synced_folder ".", "/vagrant", disabled: true   # should turn off the annoying SMB prompt
+
   config.vm.provider "hyperv" do |hv|
-	hv.memory = 1024
-  end 
+    hv.memory = 4096
+    hv.maxmemory = 4096
+    hv.cpus = 2
+  end
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
@@ -28,7 +32,7 @@ Vagrant.configure("2") do |config|
     choco install vagrant -y
     choco install awscli -y
     choco install ruby -y
-    Install-Module Carbon -force 
+    Install-Module Carbon -force
 
   SHELL
 end
