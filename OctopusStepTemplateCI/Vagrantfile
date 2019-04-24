@@ -1,0 +1,62 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "gusztavvargadr/w16s-sql17d"
+  config.vm.network "public_network", bridge: "Default Switch"
+  config.vm.boot_timeout = 600
+  
+  config.vm.provider "hyperv" do |hv|
+    hv.memory = 2000
+	hv.maxmemory = 8000
+    hv.vmname = "OctopusStepTemplateCI-Tester"
+    hv.cpus = 2
+  end 
+
+  config.vm.provision "file", source: "c:/users/stopt/source/repos/OctopusStepTemplateCI", destination: "c:/repos/OctopusSteptemplateCI"
+  
+  config.vm.provision "shell", inline: <<-SHELL
+
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+	
+	@(
+		"git",
+		"poshgit",
+		"vagrant",
+		"awscli",
+		"awspowershell",
+		"ruby"
+	) | % {
+		choco install $_ -y --no-progress
+	}
+
+	@(
+		"Carbon",
+		"Pester",
+		"PSScriptAnalyzer"
+	) | % {
+		Install-Module $_ -force -allowclobber
+	}
+	
+	iwr https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -outfile c:\windows\system32\nuget.exe -usebasic
+
+    refreshenv
+
+	<#
+    mkdir c:\\source
+    mkdir c:\\source\\repos
+    set-location c:\\source\\repos
+    New-Alias git "C:\\Program Files\\git\\cmd\\git.exe"
+    git clone https://github.com/stopthatastronaut/OctopusStepTemplateCI.git
+    cd OctopusStepTemplateCI
+	#> 
+	
+    [System.Environment]::SetEnvironmentVariable("octopusApiKey", "#{ENV['OctopusApiKey']}", [System.EnvironmentVariableTarget]::Machine)    
+    [System.Environment]::SetEnvironmentVariable("OctopusURI", "#{ENV['OctopusURI']}", [System.EnvironmentVariableTarget]::Machine)
+
+    refreshenv 
+	
+	cd "c:/repos/OctopusSteptemplateCI/build"
+	.\Invoke-PesterTests.ps1 -nuget nuget.exe 
+
+    
+  SHELL
+end
