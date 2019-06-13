@@ -14,6 +14,7 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "ferventcoder/win2012r2-x64-nocm"
   config.vm.box_version = "1.0.0"
+  config.vm.network "public_network", bridge: ENV['OctopusDSCVMSwitch']
 
    # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -50,11 +51,13 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
+
   config.vm.provider "hyperv" do |hv|
     hv.memory = "1024"
     hv.maxmemory = "1024"
     hv.vmname = "CalendarVM"
   end
+
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -66,4 +69,31 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+    choco install powershell 5.1 -y
+
+    choco install git -y
+    choco install poshgit -y
+    choco install googlechrome -y
+    choco install firefox -y
+
+    refreshenv
+
+    chrome.exe https://app.trainingpeaks.com/
+
+    hostname
+
+  SHELL
+
+  config.vm.provision "shell" inline: <<-THEEND
+
+    Rename-Computer calendarvm -Force -verbose
+    Restart-Computer -verbose -Force
+
+  THEEND
 end

@@ -3,6 +3,10 @@ Vagrant.configure("2") do |config|
   config.vm.network "public_network", bridge: "Default Switch"
   config.vm.boot_timeout = 600
   
+  # stop it asking for a password
+  config.vm.allowed_synced_folder_types = [:winrm]
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  
   config.vm.provider "hyperv" do |hv|
     hv.memory = 2000
 	hv.maxmemory = 8000
@@ -19,11 +23,7 @@ Vagrant.configure("2") do |config|
 	
 	@(
 		"git",
-		"poshgit",
-		"vagrant",
-		"awscli",
-		"awspowershell",
-		"ruby"
+		"poshgit"
 	) | % {
 		choco install $_ -y --no-progress
 	}
@@ -33,29 +33,29 @@ Vagrant.configure("2") do |config|
 		"Pester",
 		"PSScriptAnalyzer"
 	) | % {
-		Install-Module $_ -force -allowclobber
+		Install-Module $_ -force -allowclobber -skippublishercheck
 	}
 	
-	iwr https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -outfile c:\windows\system32\nuget.exe -usebasic
+	iwr https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -outfile c:/windows/system32/nuget.exe -usebasic
 
     refreshenv
 
 	<#
-    mkdir c:\\source
-    mkdir c:\\source\\repos
-    set-location c:\\source\\repos
-    New-Alias git "C:\\Program Files\\git\\cmd\\git.exe"
-    git clone https://github.com/stopthatastronaut/OctopusStepTemplateCI.git
-    cd OctopusStepTemplateCI
+		mkdir c:\\source
+		mkdir c:\\source\\repos
+		set-location c:\\source\\repos
+		New-Alias git "C:\\Program Files\\git\\cmd\\git.exe"
+		git clone https://github.com/stopthatastronaut/OctopusStepTemplateCI.git
+		cd OctopusStepTemplateCI
 	#> 
 	
-    [System.Environment]::SetEnvironmentVariable("octopusApiKey", "#{ENV['OctopusApiKey']}", [System.EnvironmentVariableTarget]::Machine)    
+    [System.Environment]::SetEnvironmentVariable("OctopusApiKey", "#{ENV['OctopusApiKey']}", [System.EnvironmentVariableTarget]::Machine)    
     [System.Environment]::SetEnvironmentVariable("OctopusURI", "#{ENV['OctopusURI']}", [System.EnvironmentVariableTarget]::Machine)
 
     refreshenv 
 	
 	cd "c:/repos/OctopusSteptemplateCI/build"
-	.\Invoke-PesterTests.ps1 -nuget nuget.exe 
+	.\\Invoke-PesterTests.ps1 -nuget "nuget.exe"
 
     
   SHELL
