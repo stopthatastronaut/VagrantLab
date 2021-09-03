@@ -84,4 +84,4 @@ workflows:
               only: /main/
 orbs:
   windows-tools: circleci/windows@2.2.0
-  octo: octopusdeploylabs/octopus-cli@0.0.2
+  octo: stopthatastronaut/octopus-cli@dev:nosudo
