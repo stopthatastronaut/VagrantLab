@@ -9,7 +9,7 @@ jobs:
           name: "Run Tests"
           shell: bash
           command: |
-            echo "oh hey, tests will go here"
+            echo "oh hey, tests will go here when they're ready"
   pack:
     docker:
       - image: ubuntu:18.04
