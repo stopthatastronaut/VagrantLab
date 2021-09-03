@@ -53,7 +53,19 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      - deploy:
+      - test:
+          filters:
+            branches:
+              only: /.*/
+      - pack:
+          filters:
+            branches:
+              only: /.main/
+      - push:
+          filters:
+            branches:
+              only: /.main/
+      - create-release:
           filters:
             branches:
               only: /.main/
