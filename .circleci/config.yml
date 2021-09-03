@@ -71,17 +71,17 @@ workflows:
           context: Octopus
           filters:
             branches:
-              only: /.main/
+              only: /main/
       - push:
           context: Octopus
           filters:
             branches:
-              only: /.main/
+              only: /main/
       - create-release:
           context: Octopus
           filters:
             branches:
-              only: /.main/
+              only: /main/
 orbs:
   windows-tools: circleci/windows@2.2.0
   octo: octopusdeploylabs/octopus-cli@0.0.2
