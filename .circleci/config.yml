@@ -20,7 +20,7 @@ jobs:
       - checkout
       - octo/pack:
           id: "VagrantCalendarbox"
-          version: $PACKAGE_VERSION
+          version: ${PACKAGE_VERSION}
           base_path: "./CalendarBox/"
           out_folder: "package"
       - persist_to_workspace:
@@ -58,7 +58,7 @@ jobs:
           project: "Vagrant Calendarbox"
           server: OCTOPUS_CLI_SERVER
           api_key: OCTOPUS_CLI_API_KEY
-          release_number: $PACKAGE_VERSION
+          release_number: ${PACKAGE_VERSION}
 workflows:
   version: 2
   pipeline:
