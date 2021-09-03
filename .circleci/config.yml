@@ -10,7 +10,7 @@ jobs:
           shell: bash
           command: |
             echo "oh hey, tests will go here when they're ready"
-  pack:
+  packandpush:
     docker:
       - image: ubuntu:18.04
     environment:
@@ -23,19 +23,6 @@ jobs:
           version: ${PACKAGE_VERSION}
           base_path: "./CalendarBox/"
           out_folder: "package"
-      - persist_to_workspace:
-          root: package
-          paths:
-            - ./
-  push:
-    docker:
-      - image: ubuntu:18.04
-    environment:
-      PACKAGE_VERSION: 0.0.<< pipeline.number >>
-    steps:
-      - octo/install-tools
-      - attach_workspace:
-          at: pack
       - octo/push:
           package: "./package/VagrantCalendarbox.${PACKAGE_VERSION}.zip"
           server: OCTOPUS_CLI_SERVER
@@ -67,17 +54,9 @@ workflows:
           filters:
             branches:
               only: /.*/
-      - pack:
+      - packandpush:
           requires:
             - test
-          context: Octopus
-          filters:
-            branches:
-              only: /main/
-      - push:
-          requires:
-            - test
-            - pack
           context: Octopus
           filters:
             branches:
@@ -85,8 +64,7 @@ workflows:
       - create-release:
           requires:
             - test
-            - pack
-            - push
+            - packandpush
           context: Octopus
           filters:
             branches:
