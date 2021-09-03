@@ -21,7 +21,7 @@ jobs:
       - octo/pack:
           id: "VagrantCalendarbox"
           version: $PACKAGE_VERSION
-          base_path: "./Calendarbox/"
+          base_path: "./CalendarBox/"
           out_folder: "package"
       - persist_to_workspace:
           root: package
@@ -37,7 +37,7 @@ jobs:
       - attach_workspace:
           at: pack
       - octo/push:
-          package: "package/VagrantCalendarbox.${PACKAGE_VERSION}.zip"
+          package: "./package/VagrantCalendarbox.${PACKAGE_VERSION}.zip"
           server: OCTOPUS_CLI_SERVER
           api_key: OCTOPUS_CLI_API_KEY
           debug: true
