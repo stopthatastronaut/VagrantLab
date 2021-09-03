@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: ubuntu:20.04
+      - image: ubuntu:18.04
     steps:
       - checkout
       - run:
@@ -12,7 +12,7 @@ jobs:
             echo "oh hey, tests will go here"
   pack:
     docker:
-      - image: ubuntu:20.04
+      - image: ubuntu:18.04
     environment:
       PACKAGE_VERSION: 0.$CIRCLE_BUILD_NUM
     steps:
@@ -29,7 +29,7 @@ jobs:
             - ./
   push:
     docker:
-      - image: ubuntu:20.04
+      - image: ubuntu:18.04
     environment:
       PACKAGE_VERSION: 0.$CIRCLE_BUILD_NUM
     steps:
@@ -49,7 +49,7 @@ jobs:
           debug: true
   create-release:
     docker:
-      - image: ubuntu:20.04
+      - image: ubuntu:18.04
     environment:
       PACKAGE_VERSION: 0.$CIRCLE_BUILD_NUM
     steps:
