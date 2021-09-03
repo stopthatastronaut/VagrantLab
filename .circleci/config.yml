@@ -56,8 +56,8 @@ jobs:
       - octo/install-tools
       - octo/create-release:
           project: "Vagrant Calendarbox"
-          server: $OCTOPUS_CLI_SERVER
-          api_key: $OCTOPUS_CLI_API_KEY
+          server: OCTOPUS_CLI_SERVER
+          api_key: OCTOPUS_CLI_API_KEY
           release_number: $PACKAGE_VERSION
 workflows:
   version: 2
