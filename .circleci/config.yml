@@ -4,10 +4,11 @@ jobs:
     docker:
       - image: ubuntu:20.04
     steps:
+      - checkout
       - run:
-        name: "Run Tests"
-        shell: bash
-        command: |
+          name: "Run Tests"
+          shell: bash
+          command: |
             echo "oh hey, tests will go here"
   pack:
     docker:
