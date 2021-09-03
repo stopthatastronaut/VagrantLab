@@ -16,17 +16,17 @@ Vagrant.configure("2") do |config|
     Set-ExecutionPolicy Bypass -Scope Process -Force
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-    choco install powershell 5.1 -y
-    choco install powershell.core -y
+    @(
+      @{ package = 'powershell.core'; version = '5.1' },
+      @{ package = 'powershell.core'; version = '' },
+      @{ package = 'git'; version = '' },
+      @{ package = 'poshgit'; version = '' },
+      @{ package = 'googlechrome'; version = '' },
+      @{ package = 'firefox'; version = '' },
+      @{ package = 'dashlane'; version = '' },
+      @{ package = 'octopus.tentacle'; version = '' }
+    ) | % { choco install $_.package $_.version -y }
 
-    choco install git -y
-    choco install poshgit -y
-    choco install googlechrome -y
-    choco install firefox -y
-    choco install trello -y
-    choco install dashlane -y
-
-    choco install octopus.tentacle
 
     refreshenv
 
