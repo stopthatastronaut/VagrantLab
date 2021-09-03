@@ -68,16 +68,25 @@ workflows:
             branches:
               only: /.*/
       - pack:
+          requires:
+            - test
           context: Octopus
           filters:
             branches:
               only: /main/
       - push:
+          requires:
+            - test
+            - pack
           context: Octopus
           filters:
             branches:
               only: /main/
       - create-release:
+          requires:
+            - test
+            - pack
+            - push
           context: Octopus
           filters:
             branches:
