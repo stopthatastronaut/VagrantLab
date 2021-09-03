@@ -1,7 +1,6 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "gusztavvargadr/iis-windows-server"
-  config.vm.box_version = "1.0.0"
   config.vm.network "public_network", bridge: 'WIFINetwork'  # deploys to phoenix. This will move to tellybox eventually
 
   config.vm.provider "hyperv" do |hv|
