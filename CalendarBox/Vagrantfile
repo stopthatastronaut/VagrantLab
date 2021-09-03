@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
 
 SHELL
 
-    s.args = [Env['OCTOPUS_CLI_API_KEY'], Env['OCTOPUS_CLI_SERVER']]
+    s.args = [ENV['OCTOPUS_CLI_API_KEY'], ENV['OCTOPUS_CLI_SERVER']]
   end
 
   config.vm.provision "shell", inline: <<-THEEND
