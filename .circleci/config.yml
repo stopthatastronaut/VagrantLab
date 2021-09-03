@@ -1,0 +1,62 @@
+version: 2.1
+jobs:
+  pack:
+    docker:
+      - image: ubuntu:20.04
+    environment:
+      PACKAGE_VERSION: 0.$CIRCLE_BUILD_NUM
+    steps:
+      - octo/install-tools
+      - checkout
+      - octo/pack:
+          id: "VagrantCalendarbox"
+          version: "$PACKAGE_VERSION"
+          base_path: "./Calendarbox/"
+          out_folder: "package"
+      - persist_to_workspace:
+          root: package
+          paths:
+            - OctopusSamples*
+  push:
+    docker:
+      - image: ubuntu:20.04
+    environment:
+      PACKAGE_VERSION: 0.$CIRCLE_BUILD_NUM
+    steps:
+      - octo/install-tools
+      - attach_workspace:
+          at: pack
+      - octo/push:
+          package: "package/VagrantCalendarbox.${PACKAGE_VERSION}.zip"
+          server: "$OCTOPUS_CLI_SERVER"
+          api_key: "$OCTOPUS_CLI_API_KEY"
+          debug: true
+      - octo/build-information:
+          package_id: "VagrantCalendarbox"
+          version: "$PACKAGE_VERSION"
+          server: "$OCTOPUS_CLI_SERVER"
+          api_key: "$OCTOPUS_CLI_API_KEY"
+          debug: true
+  create-release:
+    docker:
+      - image: ubuntu:20.04
+    environment:
+      PACKAGE_VERSION: 0.$CIRCLE_BUILD_NUM
+    steps:
+      - octo/install-tools
+      - octo/create-release:
+          project: "Vagrant Calendarbox"
+          server: "$OCTOPUS_CLI_SERVER"
+          api_key: "$OCTOPUS_CLI_API_KEY"
+          release_number: $PACKAGE_VERSION
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: /.main/
+orbs:
+  windows-tools: circleci/windows@2.2.0
+  octo: octopusdeploylabs/octopus-cli@0.0.2
