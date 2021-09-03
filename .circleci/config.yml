@@ -1,5 +1,14 @@
 version: 2.1
 jobs:
+  test:
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - run:
+        name: "Run Tests"
+        shell: bash
+        command: |
+            echo "oh hey, tests will go here"
   pack:
     docker:
       - image: ubuntu:20.04
