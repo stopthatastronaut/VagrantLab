@@ -32,6 +32,12 @@ Vagrant.configure("2") do |config|
 
     # chrome.exe https://app.trainingpeaks.com/
 
+    # enable the Sound Service
+    Set-Service audiosrv -startuptype Automatic
+    Start-Service audiosrv
+
+
+
     # we need an Octopus Polling Tentacle on here
     cd "C:\Program Files\Octopus Deploy\Tentacle"
 
