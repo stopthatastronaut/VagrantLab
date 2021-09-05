@@ -1,6 +1,6 @@
 # VagrantLab
 
-[![CircleCI](https://circleci.com/gh/stopthatastronaut/VagrantLab/tree/main.svg?style=svg)](https://circleci.com/gh/stopthatastronaut/VagrantLab/tree/main)
+[![CircleCI](https://circleci.com/gh/stopthatastronaut/VagrantLab/tree/main.svg?style=shield)](https://circleci.com/gh/stopthatastronaut/VagrantLab/tree/main)
 
 Where I do stuff with Vagrant
 
