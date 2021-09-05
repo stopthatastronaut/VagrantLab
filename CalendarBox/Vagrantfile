@@ -9,6 +9,8 @@ Vagrant.configure("2") do |config|
     hv.vmname = "CalendarVM"
   end
 
+  config.vm.synced_folder ".", "/vagrant", disabled: true   # turn off synced folders
+
   config.vm.provision "shell" do |s|
     s.inline = <<-'SHELL'
 
@@ -16,36 +18,43 @@ Vagrant.configure("2") do |config|
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
     @(
-      @{ package = 'powershell.core'; version = '5.1' },
       @{ package = 'powershell.core'; version = '' },
-      @{ package = 'git'; version = '' },
-      @{ package = 'poshgit'; version = '' },
+      # @{ package = 'git'; version = '' },
+      # @{ package = 'poshgit'; version = '' },
       @{ package = 'googlechrome'; version = '' },
       @{ package = 'firefox'; version = '' },
       @{ package = 'dashlane'; version = '' },
-      @{ package = 'octopus.tentacle'; version = '' }
+      @{ package = 'octopusdeploy.tentacle'; version = '' }
     ) | % { choco install $_.package $_.version -y }
 
 
     refreshenv
 
-    chrome.exe https://app.trainingpeaks.com/
+    # chrome.exe https://app.trainingpeaks.com/
 
     # we need an Octopus Polling Tentacle on here
     cd "C:\Program Files\Octopus Deploy\Tentacle"
 
-    Tentacle.exe create-instance --instance "Tentacle" --config "C:\Octopus\Tentacle.config" --console
-    Tentacle.exe new-certificate --instance "Tentacle" --if-blank --console
-    Tentacle.exe configure --instance "Tentacle" --reset-trust --console
-    Tentacle.exe configure --instance "Tentacle" --home "C:\Octopus" --app "C:\Octopus\Applications" --noListen "True" --console
-    Tentacle.exe register-with --instance "Tentacle" --server $2 --name "Calendar" --apiKey $1 --comms-style "TentacleActive" --server-comms-port "10943" --force --environment "Home" --role "calendar-server" --console
-    Tentacle.exe service --instance "Tentacle" --install --start --console
+    ./Tentacle.exe create-instance --instance "Tentacle" --config "C:\Octopus\Tentacle.config" --console
+    ./Tentacle.exe new-certificate --instance "Tentacle" --if-blank --console
+    ./Tentacle.exe configure --instance "Tentacle" --reset-trust --console
+    ./Tentacle.exe configure --instance "Tentacle" --home "C:\Octopus" --app "C:\Octopus\Applications" --noListen "True" --console
+    ./Tentacle.exe register-with --instance "Tentacle" --server $env:OCTOPUS_CLI_SERVER --name "Calendar" --apiKey $env:OCTOPUS_CLI_API_KEY --comms-style "TentacleActive" --server-comms-port "10943" --force --environment "Home" --role "calendar-server" --console
+    ./Tentacle.exe service --instance "Tentacle" --install --start --console
 
     hostname
+
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
+    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+    Add-WindowsCapability -Online -Name OpenSSH.Server*
+
+    #TODO: Get SSH KEY ON THIS DAMN THING
 
 SHELL
 
     s.args = [ENV['OCTOPUS_CLI_API_KEY'], ENV['OCTOPUS_CLI_SERVER']]
+    s.env = Hash["OCTOPUS_CLI_API_KEY" => ENV['OCTOPUS_CLI_API_KEY'], "OCTOPUS_CLI_SERVER" => ENV['OCTOPUS_CLI_SERVER']]
   end
 
   config.vm.provision "shell", inline: <<-THEEND
