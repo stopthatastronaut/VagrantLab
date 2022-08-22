@@ -1,12 +1,11 @@
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "gusztavvargadr/iis-windows-server"
-  config.vm.network "public_network", bridge: 'WIFINetwork'  # deploys to phoenix. This will move to tellybox eventually
+  config.vm.box = "gusztavvargadr/windows-11"
 
   config.vm.provider "hyperv" do |hv|
-    hv.memory = "1024"
-    hv.maxmemory = "1024"
-    hv.vmname = "CalendarVM"
+    hv.memory = "2048"
+    hv.maxmemory = "2048"
+    hv.vmname = "Whiteboard"
   end
 
   config.vm.synced_folder ".", "/vagrant", disabled: true   # turn off synced folders
@@ -21,7 +20,6 @@ Vagrant.configure("2") do |config|
       @{ package = 'powershell.core'; version = '' },
       @{ package = 'googlechrome'; version = '' },
       @{ package = 'firefox'; version = '' },
-      @{ package = 'dashlane'; version = '' },
       @{ package = 'octopusdeploy.tentacle'; version = '' }
     ) | % { choco install $_.package $_.version -y }
 
@@ -34,8 +32,6 @@ Vagrant.configure("2") do |config|
     Set-Service audiosrv -startuptype Automatic
     Start-Service audiosrv
 
-
-
     # we need an Octopus Polling Tentacle on here
     cd "C:\Program Files\Octopus Deploy\Tentacle"
 
@@ -43,7 +39,7 @@ Vagrant.configure("2") do |config|
     ./Tentacle.exe new-certificate --instance "Tentacle" --if-blank --console
     ./Tentacle.exe configure --instance "Tentacle" --reset-trust --console
     ./Tentacle.exe configure --instance "Tentacle" --home "C:\Octopus" --app "C:\Octopus\Applications" --noListen "True" --console
-    ./Tentacle.exe register-with --instance "Tentacle" --server $env:OCTOPUS_CLI_SERVER --name "Calendar" --apiKey $env:OCTOPUS_CLI_API_KEY --comms-style "TentacleActive" --server-comms-port "10943" --force --environment "Home" --role "calendar-server" --console
+    ./Tentacle.exe register-with --instance "Tentacle" --server $env:OCTOPUS_CLI_SERVER --name "Whiteboard" --apiKey $env:OCTOPUS_CLI_API_KEY --comms-style "TentacleActive" --server-comms-port "10943" --force --environment "Home" --role "calendar-server" --console
     ./Tentacle.exe service --instance "Tentacle" --install --start --console
 
     hostname
@@ -63,7 +59,7 @@ SHELL
 
   config.vm.provision "shell", inline: <<-THEEND
 
-    Rename-Computer calendarvm -Force -verbose
+    Rename-Computer whiteboard -Force -verbose
     Restart-Computer -verbose -Force
 
   THEEND
